@@ -11,7 +11,7 @@ game = BlackJackGame()
 
 @app.route('/')
 def main():
-    return render_template('main.html')
+    return render_template('about.html')
 
 
 @app.route('/blackjack')

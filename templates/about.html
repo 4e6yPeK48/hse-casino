@@ -1,0 +1,29 @@
+{% extends "main.html" %}
+
+{% block about %}
+
+    <header>
+        <h1>Welcome to the club, buddy</h1>
+        <nav>
+            <a href="{{ url_for('main') }}">Нихуя</a>
+            <a href="{{ url_for('blackjack') }}">Блэкджэк</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Абоба</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        </section>
+        <section>
+            <h2>Фичи:</h2>
+            <ul>
+                <li class="huina-li">Хуйня 1</li>
+                <li class="huina-li">Хуйня 2</li>
+                <li class="huina-li">Хуйня 3</li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 HSE Casino ft. HSE Escort Club</p>
+    </footer>
+{% endblock %}

@@ -59,7 +59,8 @@ class Card:
 class Deck:
     def __init__(self, decks_count=8):
         self.cards = [Card(suit, name) for suit, name in
-                      product(['Т', 'Б', 'Ч', 'П'], ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'В', 'Д', 'К', 'Т'])] * decks_count
+                      product(['Т', 'Б', 'Ч', 'П'],
+                              ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'В', 'Д', 'К', 'Т'])] * decks_count
         shuffle(self.cards)
 
     def __iter__(self):
