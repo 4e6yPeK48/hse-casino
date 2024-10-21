@@ -7,6 +7,8 @@ HSE Casino is a web application that allows users to play various casino games, 
 - Play Blackjack with multiple hands
 - Double down and split options
 - Dynamic game updates using jQuery and AJAX
+- РАКЭТКААААА
+- СЛОТИКИ
 
 ## Installation
 
@@ -49,6 +51,7 @@ HSE Casino is a web application that allows users to play various casino games, 
 ## Usage
 - Navigate to the main page at `http://localhost:5000`
 - Click on "Блэкджэк" to start playing Blackjack
+- А ЕЩЕ ЕСТЬ РАКЭТКА И СЛОТИКИ
 
 ## License
 This project is licensed under the MIT License.
