@@ -1,10 +1,7 @@
 {% extends "main.html" %}
 
 {% block blackjack %}
-
-    <h1><a href=" {{ '/' }}">Главная</a></h1>
     <h1>Блэкджэк</h1>
-    <h3>8 колод</h3>
     <div id="dealer">
         <h2>Карты дилера</h2>
         <div id="dealer-cards"></div>
@@ -15,12 +12,22 @@
         <div id="player-hands"></div>
         <div id="player-scores"></div>
     </div>
-    <button id="start">Начать</button>
-    <button id="hit">Взять</button>
-    <button id="hit2" style="display:none;">Взять 2</button>
-    <button id="stand">Стоп</button>
-    <button id="stand2" style="display:none;">Стоп 2</button>
-    <button id="double">Дабл</button>
-    <button id="split">Сплит</button>
+
+    <div class="d-flex flex-row m-auto blackjack-buttons">
+        <div class="input-group input-group-sm d-flex flex-row w-auto">
+            <label for="decks-count"></label><input type="number" class="form-control mt-1 ms-1 mb-1 rounded-start"
+                                                    id="decks-count" min="1" max="8" value="8">
+            <button type="button" id="start" class="btn btn-outline-secondary mt-1 me-1 mb-1">Начать</button>
+        </div>
+
+        <button type="button" class="btn btn-outline-success mt-1 mb-1" id="hit">Взять</button>
+        <button type="button" class="btn btn-outline-success mt-1 mb-1" id="hit2" style="display:none;">Взять 2
+        </button>
+        <button type="button" class="btn btn btn-outline-danger mt-1 mb-1" id="stand">Стоп</button>
+        <button type="button" class="btn btn btn-outline-danger mt-1 mb-1" id="stand2" style="display:none;">Стоп 2
+        </button>
+        <button type="button" class="btn btn-outline-warning mt-1 mb-1" id="double">Дабл</button>
+        <button type="button" class="btn btn-outline-info mt-1 mb-1" id="split">Сплит</button>
+    </div>
     <div id="result"></div>
 {% endblock %}

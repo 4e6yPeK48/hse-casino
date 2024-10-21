@@ -105,10 +105,10 @@ class BlackJackGame:
         self.second_hand_stand = False
         self.move_count = 0
 
-    def start(self):
-        pprint(f'Количество колод: {len(list(sorted(self.deck))) / 52}')
+    def start(self, decks_count=8):
+        pprint(f'Количество колод: {decks_count}')
         self.move_count = 0
-        self.deck = Deck()
+        self.deck = Deck(decks_count)
         self.dealer_cards = [next(self.deck), next(self.deck)]
         self.player_hands = [[next(self.deck), next(self.deck)]]
         self.dealer_score = sum([CardManager.value(card) for card in self.dealer_cards])

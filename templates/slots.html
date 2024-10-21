@@ -1,9 +1,9 @@
 {% extends "main.html" %}
 
 {% block slots %}
-    <h1><a href=" {{ '/' }}">Главная</a></h1>
+    {#    <h1><a href=" {{ '/' }}">Главная</a></h1>#}
     <h1>Слотики</h1>
-    
+
 
     <div id="slot-machine">
         <h2>Ваши слоты</h2>
@@ -14,8 +14,8 @@
     <div id="result"></div>
 
     <script>
-        document.getElementById('spin-btn').addEventListener('click', function() {
-            fetch('/slots/spin', { method: 'POST' })
+        document.getElementById('spin-btn').addEventListener('click', function () {
+            fetch('/slots/spin', {method: 'POST'})
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('slots-display').innerHTML = data.slots.join(' | ');

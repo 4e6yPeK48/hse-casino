@@ -15,7 +15,7 @@ $(document).ready(function () {
     function updateGame(data) {
         if (!data.show_dealer_cards) {
             $dealerCards.html(data.dealer_cards.join(', '));
-            $dealerScore.html('<b>Сумма:</b>' + data.dealer_score);
+            $dealerScore.html('<b>Сумма: </b>' + data.dealer_score);
         } else {
             $dealerCards.html(data.dealer_cards[0] + ', *');
             $dealerScore.html('<b>Сумма:</b> *');
@@ -26,7 +26,7 @@ $(document).ready(function () {
         $playerScores.html('<b>Суммы:</b> ' + data.player_scores.join(', '));
 
         if (data.game_over) {
-            $result.html('Результат: ' + data.result.join(', ') + '<br>Был ли дабл: ' + (data.double_check ? 'Да' : 'Нет'));
+            $result.html('<b>Результат</b>: ' + data.result.join(', ') + '<br><b>Был ли дабл:</b> ' + (data.double_check ? 'да' : 'нет'));
             $hit.add($hit2).add($double).add($split).add($stand).add($stand2).prop('disabled', true);
         } else {
             $result.html('');
@@ -48,12 +48,18 @@ $(document).ready(function () {
                 $stand2.prop('disabled', true);
             }
 
-            $split.prop('disabled', !data.can_split);
+            if (data.can_split === true) {
+                $split.removeClass('btn-outline-info').addClass('btn-info').prop('disabled', !data.can_split);
+            } else {
+                $split.removeClass('btn-info').addClass('btn-outline-info').prop('disabled', !data.can_split);
+            }
         }
     }
 
     $start.click(function () {
-        $.post('/blackjack/start', function (data) {
+        const decksCount = $('#decks-count').val();
+        $.post('/blackjack/start', {decks_count: decksCount}, function (data) {
+            $split.removeClass('btn-info').addClass('btn-outline-info');
             updateGame(data);
             if (!data.game_over) {
                 $hit.add($hit2).add($double).add($stand).add($stand2).prop('disabled', false);
@@ -106,3 +112,6 @@ $(document).ready(function () {
         });
     });
 });
+
+
+

@@ -15,16 +15,16 @@ def check_win(slots):
         return False, "😢"
 
 
-def play_slots(rounds=5):
-    print("СЛОТЫ ОТ АСХАБА ТАМАЕВА")
-    for i in range(rounds):
-        print(f"\nРаунд {i + 1}:")
-        slots = spin_slots()
-        print("Ваши символы: ", " | ".join(slots))
-        win, message = check_win(slots)
-        print(message)
-        
-    print("гроши переводить сюда")
+# def play_slots(rounds=5):
+#     print("СЛОТЫ ОТ АСХАБА ТАМАЕВА")
+#     for i in range(rounds):
+#         print(f"\nРаунд {i + 1}:")
+#         slots = spin_slots()
+#         print("Ваши символы: ", " | ".join(slots))
+#         win, message = check_win(slots)
+#         print(message)
+#
+#     print("гроши переводить сюда")
 
 
-play_slots()
+# play_slots()
