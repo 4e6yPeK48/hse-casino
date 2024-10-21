@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from blackjack import BlackJackGame
 from pprint import pprint
+from slots import spin_slots, check_win
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')
@@ -69,6 +70,22 @@ def split():
     ret = game.to_dict()
     pprint(ret)
     return jsonify(ret)
+
+@app.route('/slots/spin', methods=['POST'])
+def spin():
+    slots = spin_slots()
+    win, message = check_win(slots)
+    ret = {
+        'slots': slots,
+        'message': message,
+        'win': win
+    }
+    pprint(ret)
+    return jsonify(ret)
+
+@app.route('/slots')
+def slots():
+    return render_template('slots.html')
 
 
 if __name__ == '__main__':

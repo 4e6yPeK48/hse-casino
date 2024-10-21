@@ -17,7 +17,7 @@ HSE Casino is a web application that allows users to play various casino games, 
 ### Steps
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/hse-casino.git
+    git clone https://github.com/4e6yPeK48/hse-casino
     cd hse-casino
     ```
 

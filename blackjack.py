@@ -170,7 +170,7 @@ class BlackJackGame:
         if not self.game_over:
             self.hit(hand_index)
             self.double_check = True
-            self.game_over = True
+            self.dealer_turn()
 
     def split(self):
         self.move_count += 1
