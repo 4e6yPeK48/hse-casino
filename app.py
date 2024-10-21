@@ -2,17 +2,32 @@ from flask import Flask, render_template, jsonify, request
 from blackjack import BlackJackGame
 from pprint import pprint
 from slots import spin_slots, check_win
+from raketka import RocketGame
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')
 print(app.config)
 
 game = BlackJackGame()
-
+rocket_game = RocketGame()
 
 @app.route('/')
 def main():
     return render_template('about.html')
+
+
+@app.route('/raketka')
+def raketka():
+    return render_template('raketka.html')
+
+@app.route('/raketka/play', methods=['POST'])
+def play_raketka():
+    data = request.get_json()
+    bet = int(data.get('bet'))
+    auto_stop = float(data.get('auto_stop'))
+    result = rocket_game.place_bet(bet, auto_stop)
+    return jsonify(result)
+
 
 
 @app.route('/blackjack')

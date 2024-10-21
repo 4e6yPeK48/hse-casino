@@ -27,4 +27,4 @@ def play_slots(rounds=5):
     print("гроши переводить сюда")
 
 
-# play_slots()
+play_slots()
