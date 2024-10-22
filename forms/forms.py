@@ -14,7 +14,7 @@ class RegistrationForm(FlaskForm):
     def validate_login(self, login):
         user = User.query.filter_by(login=login.data).first()
         if user:
-            raise ValidationError('Login already exists. Please choose a different one.')
+            raise ValidationError('Пользователь уже существует.')
 
 class LoginForm(FlaskForm):
     login = StringField('Логин', validators=[DataRequired()])
