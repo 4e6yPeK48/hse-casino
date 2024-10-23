@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, session, render_template, jsonify, request, redirect, url_for, flash, session
+from flask import Flask, session, render_template, jsonify, request, redirect, url_for, flash, session, g
 
 from forms.forms import RegistrationForm, LoginForm
 from models.models import User, db
@@ -28,8 +28,40 @@ def save_game(game):
     session['blackjack_game'] = json.dumps(game.to_dict())
 
 
+def get_user_balance(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return user.balance
+    return 0
+
+
+@app.before_request
+def load_user_balance():
+    user_id = session.get('user_id')
+    g.balance = 0
+    if user_id:
+        g.balance = get_user_balance(user_id)
+
+@app.context_processor
+def inject_balance():
+    return dict(balance=g.balance)
+
+
+@app.route('/check_balance', methods=['GET'])
+def check_balance():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'User not logged in'}), 401
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({'balance': user.balance})
+
+
 @app.route('/')
-def main():
+def main_page():
     return render_template('about.html')
 
 
@@ -54,13 +86,49 @@ def blackjack():
 
 @app.route('/blackjack/start', methods=['POST'])
 def start_game():
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('User not logged in', 'danger')
+        return redirect(url_for('blackjack'))
+
+    user = User.query.get(user_id)
+    if not user:
+        flash('User not found', 'danger')
+        return redirect(url_for('blackjack'))
+
+    bet = int(request.form.get('bet', 0))
+    if user.balance < bet:
+        flash('Insufficient balance', 'danger')
+        return redirect(url_for('blackjack'))
+
+    user.balance -= bet
+    db.session.commit()
+
     decks_count = int(request.form.get('decks_count', 8))
     game = BlackJackGame()
-    game.start(decks_count)
+    game.start(decks_count, bet)
     save_game(game)
     ret = game.to_dict()
     pprint(ret)
     return jsonify(ret)
+
+
+@app.route('/blackjack/end', methods=['POST'])
+def end_game():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'User not logged in'}), 401
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    win = request.form.get('win', type=int)
+    print(win)
+    user.balance += win
+    db.session.commit()
+
+    return jsonify({'success': True, 'new_balance': user.balance})
 
 
 @app.route('/blackjack/hit', methods=['POST'])

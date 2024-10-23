@@ -99,6 +99,7 @@ class CardManager:
 
 class BlackJackGame:
     def __init__(self):
+        self.bet = 0
         self.deck = Deck()
         self.dealer_cards: List[Card] = []
         self.player_hands: List[List[Card]] = [[]]
@@ -114,7 +115,8 @@ class BlackJackGame:
         self.second_hand_stand = False
         self.move_count = 0
 
-    def start(self, decks_count=8):
+    def start(self, decks_count=8, bet=0):
+        self.bet = bet
         self.move_count = 0
         self.deck = Deck(decks_count)
         self.dealer_cards = [next(self.deck), next(self.deck)]
@@ -236,22 +238,30 @@ class BlackJackGame:
 
     def get_result(self):
         results = []
+        win = 0
         for score in self.player_scores:
             if score > 21:
                 results.append('Дилер')
+                win += 0
             elif self.dealer_score > 21:
                 results.append('Игрок')
+                win += self.bet * 2
             elif score == self.dealer_score:
                 results.append('Ничья')
+                win += self.bet
             elif score == 21:
                 results.append('Блэкджэк у игрока')
+                win += self.bet * 2.5
             elif self.dealer_score == 21:
                 results.append('Блэкджэк у дилера')
+                win += 0
             elif score > self.dealer_score:
                 results.append('Игрок')
+                win += self.bet * 2
             else:
                 results.append('Дилер')
-        return results
+                win += 0
+        return results, win
 
     def can_split(self):
         return (not self.game_over and len(self.player_hands) == 1 and
@@ -259,6 +269,7 @@ class BlackJackGame:
 
     def to_dict(self):
         return {
+            'bet': self.bet,
             'dealer_cards': [str(card) for card in self.dealer_cards],
             'player_hands': [[str(card) for card in hand] for hand in self.player_hands],
             'dealer_score': self.dealer_score,
@@ -269,7 +280,8 @@ class BlackJackGame:
             'second_hand_bust': self.second_hand_bust,
             'first_hand_stand': self.first_hand_stand,
             'second_hand_stand': self.second_hand_stand,
-            'result': self.get_result() if self.game_over else None,
+            'result': self.get_result()[0] if self.game_over else None,
+            'win': self.get_result()[1] if self.game_over else None,
             'can_split': self.can_split(),
             'move_count': self.move_count
         }
@@ -277,6 +289,7 @@ class BlackJackGame:
     @classmethod
     def from_dict(cls, data):
         game = cls()
+        game.bet = data['bet']
         game.dealer_cards = [CardManager.from_str(card) for card in data['dealer_cards']]
         game.player_hands = [[CardManager.from_str(card) for card in hand] for hand in data['player_hands']]
         game.dealer_score = data['dealer_score']

@@ -7,6 +7,7 @@ $(document).ready(function () {
     const $dealerCardsContainer = $('#dealer-cards-container');
     const $playerScores = $('#player-scores');
     const $result = $('#result');
+    const $win = $('#win');
     const $hit = $('#hit');
     const $hit2 = $('#hit2');
     const $double = $('#double');
@@ -189,7 +190,16 @@ $(document).ready(function () {
         });
 
         if (data.game_over) {
+            console.log(data.result, data.win)
             $result.html('<b>Результат</b>: ' + data.result.join(', ') + '<br><b>Был ли дабл:</b> ' + (data.double_check ? 'да' : 'нет'));
+            $win.html('<b>Выигрыш</b>: ' + data.win);
+
+            $.post('/blackjack/end', {win: data.win}, function (response) {
+                if (response.success) {
+                    $('#balance-int').text(response.new_balance);
+                }
+            });
+
             $hit.add($hit2).add($double).add($split).add($stand).add($stand2).prop('disabled', true);
 
             if (data.result.includes('Игрок')) {
@@ -234,18 +244,40 @@ $(document).ready(function () {
     }
 
     $start.click(function () {
+        const bet = parseInt($('#bet').val());
         const decksCount = $('#decks-count').val();
-        $dealerCardsContainer.empty();
-        $playerCardsContainer.empty();
-        $playerCardsContainer2.empty();
-        existingPlayerCards = [];
-        existingDealerCards = [];
-        $.post('/blackjack/start', {decks_count: decksCount}, function (data) {
-            $split.removeClass('btn-info').addClass('btn-outline-info');
-            updateGame(data);
-            if (!data.game_over) {
-                $hit.add($hit2).add($double).add($stand).add($stand2).prop('disabled', false);
-                $hit2.add($stand2).hide();
+
+        $.get('/check_balance', function (data) {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                const balanceInt = parseInt(data.balance);
+                if (balanceInt < bet) {
+                    alert('Insufficient balance');
+                    return;
+                }
+
+                const newBalance = balanceInt - bet;
+                $('#balance-int').text(newBalance);
+
+                $dealerCardsContainer.empty();
+                $playerCardsContainer.empty();
+                $playerCardsContainer2.empty();
+                existingPlayerCards = [];
+                existingDealerCards = [];
+
+                $.post('/blackjack/start', {bet: bet, decks_count: decksCount}, function (data) {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        $split.removeClass('btn-info').addClass('btn-outline-info');
+                        updateGame(data);
+                        if (!data.game_over) {
+                            $hit.add($hit2).add($double).add($stand).add($stand2).prop('disabled', false);
+                            $hit2.add($stand2).hide();
+                        }
+                    }
+                });
             }
         });
     });
@@ -327,4 +359,5 @@ $(document).ready(function () {
             updateGame(data);
         });
     });
-});
+})
+;
