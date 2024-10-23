@@ -1,36 +1,54 @@
 {% extends "main.html" %}
 
 {% block blackjack %}
-    <h1>Блэкджэк</h1>
-    <div id="dealer">
-        <h2>Карты дилера</h2>
-        <div id="dealer-cards"></div>
-        <div id="dealer-score"></div>
-        <div id="dealer-cards-container" class="cards-container d-flex flex-row"></div>
-    </div>
-    <div id="player">
-        <h2>Карты игрока</h2>
-        <div id="player-hands"></div>
-        <div id="player-scores"></div>
-        <div id="player-cards-container" class="cards-container d-flex flex-row"></div>
-        <div id="player-cards-container-2" class="cards-container d-flex flex-row"></div>
-    </div>
+    <div class="blackjack w-100 h-auto d-flex flex-column">
+        <div class="m-1 p-0 d-flex flex-column"><h1 class="m-0">Блэкджэк</h1></div>
+        <div class="w-100 justify-content-between d-flex flex-row m-auto">
+            <div class="flex-fill d-flex w-25 h-auto result-info m-2 p-2 flex-column">
+                <div id="result" class="m-auto"></div>
+            </div>
+            <div class="flex-fill w-100 h-auto d-flex flex-column">
+                <div class="blackjack-info m-auto d-flex justify-content-between w-100">
+                    <div id="dealer" class="flex-fill m-2 p-2 w-100">
+                        <div id="dealer-cards-container" class="cards-container d-flex flex-row"></div>
+                    </div>
+                    <div id="info1" class="flex-fill m-2 p-2 w-25 ">
+                        <h2>Карты дилера</h2>
+                        <div id="dealer-cards"></div>
+                        <div id="dealer-score"></div>
+                    </div>
+                </div>
 
-    <div class="d-flex flex-row m-auto blackjack-buttons">
-        <div class="input-group input-group-sm d-flex flex-row w-auto">
-            <label for="decks-count"></label><input type="number" class="form-control mt-1 ms-1 mb-1 rounded-start"
-                                                    id="decks-count" min="1" max="8" value="8">
-            <button type="button" id="start" class="btn btn-outline-secondary mt-1 me-1 mb-1">Начать</button>
+                <div class="blackjack-info m-auto d-flex justify-content-between w-100">
+                    <div id="player" class="flex-fill m-2 p-2 w-100">
+                        <div id="player-cards-container" class="cards-container d-flex flex-row"></div>
+                        <div id="player-cards-container-2" class="cards-container d-flex flex-row"></div>
+                    </div>
+                    <div id="info2" class="flex-fill m-2 p-2 w-25 ">
+                        <h2>Карты игрока</h2>
+                        <div id="player-hands"></div>
+                        <div id="player-scores"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <button type="button" class="btn btn-outline-success mt-1 mb-1" id="hit">Взять</button>
-        <button type="button" class="btn btn-outline-success mt-1 mb-1" id="hit2" style="display:none;">Взять 2
-        </button>
-        <button type="button" class="btn btn btn-outline-danger mt-1 mb-1" id="stand">Стоп</button>
-        <button type="button" class="btn btn btn-outline-danger mt-1 mb-1" id="stand2" style="display:none;">Стоп 2
-        </button>
-        <button type="button" class="btn btn-outline-warning mt-1 mb-1" id="double">Дабл</button>
-        <button type="button" class="btn btn-outline-info mt-1 mb-1" id="split">Сплит</button>
+        <div class="d-flex flex-row m-auto blackjack-buttons">
+            <div class="input-group input-group-sm d-flex flex-row w-auto">
+                <label for="decks-count"></label><input type="number" class="form-control mt-1 ms-1 mb-1 rounded-start"
+                                                        id="decks-count" min="1" max="8" value="8">
+                <button type="button" id="start" class="btn btn-outline-secondary mt-1 me-1 mb-1">Начать</button>
+            </div>
+
+            <button type="button" class="btn btn-outline-success mt-1 mb-1" id="hit">Взять</button>
+            <button type="button" class="btn btn-outline-success mt-1 mb-1" id="hit2" style="display:none;">Взять 2
+            </button>
+            <button type="button" class="btn btn btn-outline-danger mt-1 mb-1" id="stand">Стоп</button>
+            <button type="button" class="btn btn btn-outline-danger mt-1 mb-1" id="stand2" style="display:none;">Стоп 2
+            </button>
+            <button type="button" class="btn btn-outline-warning mt-1 mb-1" id="double">Дабл</button>
+            <button type="button" class="btn btn-outline-info mt-1 mb-1" id="split">Сплит</button>
+        </div>
+
     </div>
-    <div id="result"></div>
 {% endblock %}

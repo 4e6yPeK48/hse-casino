@@ -3,6 +3,7 @@ $(document).ready(function () {
     const $dealerScore = $('#dealer-score');
     const $playerHands = $('#player-hands');
     const $playerCardsContainer = $('#player-cards-container');
+    const $playerCardsContainer2 = $('#player-cards-container-2');
     const $dealerCardsContainer = $('#dealer-cards-container');
     const $playerScores = $('#player-scores');
     const $result = $('#result');
@@ -75,13 +76,11 @@ $(document).ready(function () {
     const dealerCardCounts = {};
 
     function addCardToArray(cardKey, card, cardArray, cardCounts) {
-        // Увеличиваем счётчик для каждой уникальной карты
         if (!cardCounts[cardKey]) {
             cardCounts[cardKey] = 0;
         }
         cardCounts[cardKey]++;
 
-        // Добавляем карту в массив, если она ещё не была добавлена
         cardArray.push({key: cardKey, card: card, index: cardCounts[cardKey]});
     }
 
@@ -100,10 +99,14 @@ $(document).ready(function () {
         $playerScores.html('<b>Суммы:</b> ' + data.player_scores.join(', '));
 
         data.player_hands.forEach((hand, handIndex) => {
+            const $targetContainer = handIndex === 0 ? $playerCardsContainer : $('#player-cards-container-2');
+
             hand.forEach((card, cardIndex) => {
                 const cardKey = `${handIndex}-${cardIndex}`;
+
                 if (!existingPlayerCards.some(c => c.key === cardKey)) {
                     addCardToArray(cardKey, card, existingPlayerCards, playerCardCounts);
+
                     const shortName = cardShortNames[card] || card;
                     const $cardDiv = $('<div>').addClass('card');
                     const $topLeft = $('<div>').addClass('top-left').text(shortName);
@@ -118,7 +121,7 @@ $(document).ready(function () {
 
                     $cardDiv.append($topLeft, $bottomRight);
                     setTimeout(() => {
-                        $playerCardsContainer.append($cardDiv);
+                        $targetContainer.append($cardDiv);
                         setTimeout(() => {
                             $cardDiv.addClass('animate');
                         }, 50);
@@ -188,9 +191,9 @@ $(document).ready(function () {
         const decksCount = $('#decks-count').val();
         $dealerCardsContainer.empty();
         $playerCardsContainer.empty();
+        $playerCardsContainer2.empty();
         existingPlayerCards = [];
         existingDealerCards = [];
-        console.log(existingPlayerCards)
         $.post('/blackjack/start', {decks_count: decksCount}, function (data) {
             $split.removeClass('btn-info').addClass('btn-outline-info');
             updateGame(data);
@@ -241,6 +244,40 @@ $(document).ready(function () {
 
     $split.click(function () {
         $.post('/blackjack/split', function (data) {
+            const firstHandNewCard = data.player_hands[0][1];
+            const shortNameFirstHand = cardShortNames[firstHandNewCard] || firstHandNewCard;
+
+            const $firstHandLastCard = $playerCardsContainer.find('.card:last');
+            $firstHandLastCard.find('.top-left, .bottom-right').text(shortNameFirstHand);
+
+            if (shortNameFirstHand.includes('♠️') || shortNameFirstHand.includes('♣️')) {
+                $firstHandLastCard.find('.top-left').css('color', 'black');
+                $firstHandLastCard.find('.bottom-right').css('color', 'black');
+            } else if (shortNameFirstHand.includes('♥️') || shortNameFirstHand.includes('♦️')) {
+                $firstHandLastCard.find('.top-left').css('color', 'red');
+                $firstHandLastCard.find('.bottom-right').css('color', 'red');
+            }
+
+            const secondHandFirstCard = data.player_hands[1][0];
+            const shortNameSecondHand = cardShortNames[secondHandFirstCard] || secondHandFirstCard;
+
+            const $secondHandCardDiv = $('<div>').addClass('card');
+            const $topLeftSecondHand = $('<div>').addClass('top-left').text(shortNameSecondHand);
+            const $bottomRightSecondHand = $('<div>').addClass('bottom-right').text(shortNameSecondHand);
+
+            $secondHandCardDiv.append($topLeftSecondHand, $bottomRightSecondHand);
+            $('#player-cards-container-2').append($secondHandCardDiv);
+
+            if (shortNameSecondHand.includes('♠️') || shortNameSecondHand.includes('♣️')) {
+                $secondHandCardDiv.find('.top-left').css('color', 'black');
+                $secondHandCardDiv.find('.bottom-right').css('color', 'black');
+            } else if (shortNameSecondHand.includes('♥️') || shortNameSecondHand.includes('♦️')) {
+                $secondHandCardDiv.find('.top-left').css('color', 'red');
+                $secondHandCardDiv.find('.bottom-right').css('color', 'red');
+            }
+
+            $('#player-cards-container-2 .card:first').remove();
+
             updateGame(data);
         });
     });

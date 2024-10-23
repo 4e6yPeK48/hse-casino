@@ -21,13 +21,23 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.blackjack-info{
+    width: 70%;
+    position: relative;
+}
+
 #dealer, #player {
-    margin: 20px auto;
-    padding: 20px;
     border: 1px solid #ccc;
     background-color: #fff;
-    width: 80%;
-    max-width: 600px;
+}
+
+#info1, #info2, .result-info {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+.result-info{
+    min-height: 100% !important;
 }
 
 #result {

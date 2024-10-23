@@ -60,7 +60,7 @@ class Deck:
     def __init__(self, decks_count=8):
         self.cards = [Card(suit, name) for suit, name in
                       product(['Т', 'Б', 'Ч', 'П'],
-                              ['2', '3', '4', ])] * decks_count
+                              ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'В', 'Д', 'К', 'Т'])] * decks_count
         shuffle(self.cards)
 
     def __iter__(self):
@@ -97,6 +97,7 @@ class BlackJackGame:
         self.player_hands: List[List[Card]] = [[]]
         self.dealer_score = 0
         self.player_scores = [0]
+        self.player_aces_count = [0]
         self.double_check = False
         self.game_over = False
         self.first_hand_bust = False
@@ -114,6 +115,7 @@ class BlackJackGame:
         self.dealer_score = sum([CardManager.value(card) for card in self.dealer_cards])
         self.player_scores = [CardManager.value(card) for card in self.player_hands[0]]
         self.player_scores = [sum(self.player_scores)]
+        self.player_aces_count = [sum(1 for card in self.player_hands[0] if card.name == 'Туз')]
         self.adjust_for_aces(0)
         self.game_over = False
         self.check_game_over()
@@ -124,6 +126,8 @@ class BlackJackGame:
             tmp = next(self.deck)
             self.player_hands[hand_index].append(tmp)
             self.player_scores[hand_index] += CardManager.value(tmp)
+            if tmp.name == 'Туз':
+                self.player_aces_count[hand_index] += 1
             self.adjust_for_aces(hand_index)
             if self.player_scores[hand_index] > 21:
                 if hand_index == 0 and len(self.player_hands) > 1:
@@ -162,8 +166,9 @@ class BlackJackGame:
         self.game_over = True
 
     def adjust_for_aces(self, hand_index):
-        while self.player_scores[hand_index] > 21 and any(card.name == 'Туз' for card in self.player_hands[hand_index]):
+        while self.player_scores[hand_index] > 21 and self.player_aces_count[hand_index] > 0:
             self.player_scores[hand_index] -= 10
+            self.player_aces_count[hand_index] -= 1
 
     def double(self, hand_index=0):
         self.move_count += 1
