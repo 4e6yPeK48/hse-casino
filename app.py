@@ -1,4 +1,6 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for, flash, session
+import json
+
+from flask import Flask, session, render_template, jsonify, request, redirect, url_for, flash, session
 
 from forms.forms import RegistrationForm, LoginForm
 from models.models import User, db
@@ -14,8 +16,16 @@ print(app.config)
 
 # app = Flask(__name__,)
 
-game = BlackJackGame()
 rocket_game = RocketGame()
+
+def get_game():
+    game_data = session.get('blackjack_game')
+    if game_data:
+        return BlackJackGame.from_dict(json.loads(game_data))
+    return BlackJackGame()
+
+def save_game(game):
+    session['blackjack_game'] = json.dumps(game.to_dict())
 
 
 @app.route('/')
@@ -44,10 +54,10 @@ def blackjack():
 
 @app.route('/blackjack/start', methods=['POST'])
 def start_game():
-    global game
     decks_count = int(request.form.get('decks_count', 8))
     game = BlackJackGame()
     game.start(decks_count)
+    save_game(game)
     ret = game.to_dict()
     pprint(ret)
     return jsonify(ret)
@@ -55,12 +65,14 @@ def start_game():
 
 @app.route('/blackjack/hit', methods=['POST'])
 def hit():
+    game = get_game()
     hand_index = request.form.get('hand_index')
     if hand_index is None:
         hand_index = 0
     else:
         hand_index = int(hand_index)
     game.hit(hand_index)
+    save_game(game)
     ret = game.to_dict()
     pprint(ret)
     return jsonify(ret)
@@ -68,12 +80,14 @@ def hit():
 
 @app.route('/blackjack/stand', methods=['POST'])
 def stand():
+    game = get_game()
     hand_index = request.form.get('hand_index')
     if hand_index is None:
         hand_index = 0
     else:
         hand_index = int(hand_index)
     game.stand(hand_index)
+    save_game(game)
     ret = game.to_dict()
     pprint(ret)
     return jsonify(ret)
@@ -81,7 +95,9 @@ def stand():
 
 @app.route('/blackjack/double', methods=['POST'])
 def double():
+    game = get_game()
     game.double()
+    save_game(game)
     ret = game.to_dict()
     pprint(ret)
     return jsonify(ret)
@@ -89,7 +105,9 @@ def double():
 
 @app.route('/blackjack/split', methods=['POST'])
 def split():
+    game = get_game()
     game.split()
+    save_game(game)
     ret = game.to_dict()
     pprint(ret)
     return jsonify(ret)

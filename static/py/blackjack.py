@@ -16,6 +16,8 @@ class Card:
                 self.suit = '♥ черви'
             case 'П':
                 self.suit = '♠ пики'
+            case _:
+                self.suit = suit
         match name:
             case '2':
                 self.name = '2'
@@ -89,6 +91,11 @@ class CardManager:
         else:
             return 11
 
+    @staticmethod
+    def from_str(card_str: str) -> Card:
+        name, suit = card_str.split(' ', 1)
+        return Card(suit, name)
+
 
 class BlackJackGame:
     def __init__(self):
@@ -108,7 +115,6 @@ class BlackJackGame:
         self.move_count = 0
 
     def start(self, decks_count=8):
-        pprint(f'Количество колод: {decks_count}')
         self.move_count = 0
         self.deck = Deck(decks_count)
         self.dealer_cards = [next(self.deck), next(self.deck)]
@@ -132,7 +138,6 @@ class BlackJackGame:
             self.player_hands[hand_index].append(tmp)
             self.player_scores[hand_index] += CardManager.value(tmp)
             if tmp.name == 'Туз':
-                print(f'self.player_aces_count: {self.player_aces_count}, hand_index: {hand_index}')
                 self.player_aces_count[hand_index] += 1
             self.adjust_for_aces(hand_index)
             if self.player_scores[hand_index] > 21:
@@ -169,7 +174,6 @@ class BlackJackGame:
         self.game_over = True
 
     def adjust_for_aces(self, hand_index):
-        print(f'self.player_aces_count: {self.player_aces_count}, hand_index: {hand_index}')
         while self.player_scores[hand_index] > 21 and self.player_aces_count[hand_index] > 0:
             self.player_scores[hand_index] -= 10
             self.player_aces_count[hand_index] -= 1
@@ -269,3 +273,19 @@ class BlackJackGame:
             'can_split': self.can_split(),
             'move_count': self.move_count
         }
+
+    @classmethod
+    def from_dict(cls, data):
+        game = cls()
+        game.dealer_cards = [CardManager.from_str(card) for card in data['dealer_cards']]
+        game.player_hands = [[CardManager.from_str(card) for card in hand] for hand in data['player_hands']]
+        game.dealer_score = data['dealer_score']
+        game.player_scores = data['player_scores']
+        game.double_check = data['double_check']
+        game.game_over = data['game_over']
+        game.first_hand_bust = data['first_hand_bust']
+        game.second_hand_bust = data['second_hand_bust']
+        game.first_hand_stand = data['first_hand_stand']
+        game.second_hand_stand = data['second_hand_stand']
+        game.move_count = data['move_count']
+        return game

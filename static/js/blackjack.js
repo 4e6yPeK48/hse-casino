@@ -100,6 +100,22 @@ $(document).ready(function () {
         });
     }
 
+    function handlePlayerWinSmall() {
+        confetti({
+            particleCount: 150,
+            angle: 60,
+            spread: 50,
+            origin: {x: -0.1, y: 0.9}
+        });
+
+        confetti({
+            particleCount: 150,
+            angle: 120,
+            spread: 50,
+            origin: {x: 1.1, y: 0.9}
+        });
+    }
+
 
     function updateGame(data) {
         if (!data.show_dealer_cards) {
@@ -176,8 +192,12 @@ $(document).ready(function () {
             $result.html('<b>Результат</b>: ' + data.result.join(', ') + '<br><b>Был ли дабл:</b> ' + (data.double_check ? 'да' : 'нет'));
             $hit.add($hit2).add($double).add($split).add($stand).add($stand2).prop('disabled', true);
 
-            if (data.result.includes('Игрок') || data.result.includes('Блэкджэк у игрока')) {
+            if (data.result.includes('Игрок')) {
                 setTimeout(handlePlayerWin, 1000);
+            }
+            if (data.result.includes('Блэкджэк у игрока')) {
+                setTimeout(handlePlayerWin, 1000);
+                setTimeout(handlePlayerWinSmall, 1500);
             }
         } else {
             $result.html('');
@@ -204,6 +224,12 @@ $(document).ready(function () {
             } else {
                 $split.removeClass('btn-info').addClass('btn-outline-info').prop('disabled', !data.can_split);
             }
+        }
+        if (data.player_hands[0].length > 2 || (data.player_hands.length > 1 && data.player_hands[1].length > 1)) {
+            $split.prop('disabled', true);
+            $double.prop('disabled', true);
+        } else {
+            $split.prop('disabled', !data.can_split);
         }
     }
 
