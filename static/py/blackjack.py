@@ -96,8 +96,9 @@ class BlackJackGame:
         self.dealer_cards: List[Card] = []
         self.player_hands: List[List[Card]] = [[]]
         self.dealer_score = 0
+        self.dealer_aces_count = 0
         self.player_scores = [0]
-        self.player_aces_count = [0]
+        self.player_aces_count = [0, 0]
         self.double_check = False
         self.game_over = False
         self.first_hand_bust = False
@@ -113,20 +114,25 @@ class BlackJackGame:
         self.dealer_cards = [next(self.deck), next(self.deck)]
         self.player_hands = [[next(self.deck), next(self.deck)]]
         self.dealer_score = sum([CardManager.value(card) for card in self.dealer_cards])
+        self.dealer_aces_count = 0
         self.player_scores = [CardManager.value(card) for card in self.player_hands[0]]
         self.player_scores = [sum(self.player_scores)]
-        self.player_aces_count = [sum(1 for card in self.player_hands[0] if card.name == 'Туз')]
+        self.player_aces_count = [sum(1 for card in self.player_hands[0] if card.name == 'Туз'), 0]
         self.adjust_for_aces(0)
+        self.adjust_dealer_for_aces()
         self.game_over = False
         self.check_game_over()
 
     def hit(self, hand_index=0):
         self.move_count += 1
         if not self.game_over:
+            if hand_index >= len(self.player_hands):
+                raise IndexError(f"Invalid hand_index: {hand_index}")
             tmp = next(self.deck)
             self.player_hands[hand_index].append(tmp)
             self.player_scores[hand_index] += CardManager.value(tmp)
             if tmp.name == 'Туз':
+                print(f'self.player_aces_count: {self.player_aces_count}, hand_index: {hand_index}')
                 self.player_aces_count[hand_index] += 1
             self.adjust_for_aces(hand_index)
             if self.player_scores[hand_index] > 21:
@@ -157,18 +163,21 @@ class BlackJackGame:
             tmp = next(self.deck)
             self.dealer_cards.append(tmp)
             if tmp.name == 'Туз':
-                if self.dealer_score + 11 > 21:
-                    self.dealer_score += 1
-                else:
-                    self.dealer_score += 11
-            else:
-                self.dealer_score += CardManager.value(tmp)
+                self.dealer_aces_count += 1
+            self.dealer_score += CardManager.value(tmp)
+            self.adjust_dealer_for_aces()
         self.game_over = True
 
     def adjust_for_aces(self, hand_index):
+        print(f'self.player_aces_count: {self.player_aces_count}, hand_index: {hand_index}')
         while self.player_scores[hand_index] > 21 and self.player_aces_count[hand_index] > 0:
             self.player_scores[hand_index] -= 10
             self.player_aces_count[hand_index] -= 1
+
+    def adjust_dealer_for_aces(self):
+        while self.dealer_score > 21 and self.dealer_aces_count > 0:
+            self.dealer_score -= 10
+            self.dealer_aces_count -= 1
 
     def double(self, hand_index=0):
         self.move_count += 1
@@ -193,12 +202,31 @@ class BlackJackGame:
         if len(self.player_hands) > 1:
             if self.first_hand_bust and self.second_hand_bust:
                 self.game_over = True
-            if self.first_hand_bust and self.second_hand_stand:
-                self.game_over = True
-            if self.second_hand_bust and self.first_hand_stand:
-                self.game_over = True
+
             if self.first_hand_stand and self.second_hand_stand:
+                self.dealer_turn()
+
+            if self.first_hand_bust and self.second_hand_stand:
+                self.dealer_turn()
+
+            if self.second_hand_bust and self.first_hand_stand:
+                self.dealer_turn()
+
+            if self.player_scores[0] == 21 and self.second_hand_bust:
                 self.game_over = True
+
+            if self.player_scores[1] == 21 and self.first_hand_bust:
+                self.game_over = True
+
+            if self.player_scores[0] == 21 and self.second_hand_stand:
+                self.dealer_turn()
+
+            if self.player_scores[1] == 21 and self.first_hand_stand:
+                self.dealer_turn()
+
+            if self.player_scores[0] == 21 and self.player_scores[1] == 21:
+                self.game_over = True
+
         elif self.player_scores[0] > 21:
             self.game_over = True
 
@@ -212,7 +240,7 @@ class BlackJackGame:
             elif score == self.dealer_score:
                 results.append('Ничья')
             elif score == 21:
-                results.append('Блэкджэк')
+                results.append('Блэкджэк у игрока')
             elif self.dealer_score == 21:
                 results.append('Блэкджэк у дилера')
             elif score > self.dealer_score:

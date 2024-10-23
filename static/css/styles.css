@@ -210,3 +210,9 @@ button:disabled {
     right: 5px;
     transform: rotate(180deg);
 }
+
+#confetti{
+    width: 100px;
+    height: 100px;
+    background: #0c5460;
+}

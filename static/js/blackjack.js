@@ -84,6 +84,22 @@ $(document).ready(function () {
         cardArray.push({key: cardKey, card: card, index: cardCounts[cardKey]});
     }
 
+    function handlePlayerWin() {
+        confetti({
+            particleCount: 200,
+            angle: 60,
+            spread: 70,
+            origin: {x: -0.1, y: 0.7}
+        });
+
+        confetti({
+            particleCount: 200,
+            angle: 120,
+            spread: 70,
+            origin: {x: 1.1, y: 0.7}
+        });
+    }
+
 
     function updateGame(data) {
         if (!data.show_dealer_cards) {
@@ -152,13 +168,17 @@ $(document).ready(function () {
                     setTimeout(() => {
                         $cardDiv.addClass('animate');
                     }, 50);
-                }, cardIndex * 250);
+                }, cardIndex * 150);
             }
         });
 
         if (data.game_over) {
             $result.html('<b>Результат</b>: ' + data.result.join(', ') + '<br><b>Был ли дабл:</b> ' + (data.double_check ? 'да' : 'нет'));
             $hit.add($hit2).add($double).add($split).add($stand).add($stand2).prop('disabled', true);
+
+            if (data.result.includes('Игрок') || data.result.includes('Блэкджэк у игрока')) {
+                setTimeout(handlePlayerWin, 1000);
+            }
         } else {
             $result.html('');
             $hit.add($double).add($split).add($stand).prop('disabled', false);
