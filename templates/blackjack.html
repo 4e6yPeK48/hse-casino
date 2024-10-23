@@ -6,13 +6,14 @@
         <h2>Карты дилера</h2>
         <div id="dealer-cards"></div>
         <div id="dealer-score"></div>
-{#        <div id="dealer-cards" class="cards-container"></div>#}
+        <div id="dealer-cards-container" class="cards-container d-flex flex-row"></div>
     </div>
     <div id="player">
         <h2>Карты игрока</h2>
         <div id="player-hands"></div>
         <div id="player-scores"></div>
-{#        <div id="player-cards" class="cards-container"></div>#}
+        <div id="player-cards-container" class="cards-container d-flex flex-row"></div>
+        <div id="player-cards-container-2" class="cards-container d-flex flex-row"></div>
     </div>
 
     <div class="d-flex flex-row m-auto blackjack-buttons">
@@ -32,43 +33,4 @@
         <button type="button" class="btn btn-outline-info mt-1 mb-1" id="split">Сплит</button>
     </div>
     <div id="result"></div>
-    <script>
-        function addCard(containerId, cardName, delay, index) {
-            const container = document.getElementById(containerId);
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.style.transform = `translate(${100 + index * 65}px, ${0})`;
-            card.style.zIndex = index;
-
-            const cardContent = document.createElement('div');
-            cardContent.className = 'card-content';
-            cardContent.textContent = cardName;
-
-            card.appendChild(cardContent);
-            container.appendChild(card);
-
-            setTimeout(() => {
-                card.classList.add('show');
-            }, delay);
-        }
-
-        function dealCards(playerCards) {
-            playerCards.forEach((card, index) => {
-                addCard('player-cards', card, index * 500, index);
-            });
-        }
-
-        function dealCardsDealer(dealerCards) {
-            dealerCards.forEach((card, index) => {
-                addCard('dealer-cards', card, index * 500, index);
-            });
-        }
-
-        document.getElementById('start').addEventListener('click', () => {
-            const playerCards = ['Ace of Spades', '10 of Hearts'];
-            const dealerCards = ['King of Diamonds', '7 of Clubs'];
-            dealCards(playerCards);
-            dealCardsDealer(dealerCards);
-        });
-    </script>
 {% endblock %}

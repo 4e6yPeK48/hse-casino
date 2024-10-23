@@ -1,6 +1,6 @@
 from pprint import pprint
+from typing import List
 
-from flask import Flask, render_template, jsonify, request
 from itertools import product
 from random import shuffle
 
@@ -60,7 +60,7 @@ class Deck:
     def __init__(self, decks_count=8):
         self.cards = [Card(suit, name) for suit, name in
                       product(['Т', 'Б', 'Ч', 'П'],
-                              ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'В', 'Д', 'К', 'Т'])] * decks_count
+                              ['2', '3', '4', ])] * decks_count
         shuffle(self.cards)
 
     def __iter__(self):
@@ -81,7 +81,7 @@ class Deck:
 
 class CardManager:
     @staticmethod
-    def value(card: Card, ace=None) -> int:
+    def value(card: Card) -> int:
         if card.name in ['2', '3', '4', '5', '6', '7', '8', '9', '10']:
             return int(card.name)
         elif card.name in ['Валет', 'Дама', 'Король']:
@@ -93,8 +93,8 @@ class CardManager:
 class BlackJackGame:
     def __init__(self):
         self.deck = Deck()
-        self.dealer_cards = []
-        self.player_hands = [[]]
+        self.dealer_cards: List[Card] = []
+        self.player_hands: List[List[Card]] = [[]]
         self.dealer_score = 0
         self.player_scores = [0]
         self.double_check = False
@@ -114,6 +114,7 @@ class BlackJackGame:
         self.dealer_score = sum([CardManager.value(card) for card in self.dealer_cards])
         self.player_scores = [CardManager.value(card) for card in self.player_hands[0]]
         self.player_scores = [sum(self.player_scores)]
+        self.adjust_for_aces(0)
         self.game_over = False
         self.check_game_over()
 
@@ -122,13 +123,8 @@ class BlackJackGame:
         if not self.game_over:
             tmp = next(self.deck)
             self.player_hands[hand_index].append(tmp)
-            if tmp.name == 'Туз':
-                if self.player_scores[hand_index] + 11 > 21:
-                    self.player_scores[hand_index] += 1
-                else:
-                    self.player_scores[hand_index] += 11
-            else:
-                self.player_scores[hand_index] += CardManager.value(tmp)
+            self.player_scores[hand_index] += CardManager.value(tmp)
+            self.adjust_for_aces(hand_index)
             if self.player_scores[hand_index] > 21:
                 if hand_index == 0 and len(self.player_hands) > 1:
                     self.first_hand_bust = True
@@ -164,6 +160,10 @@ class BlackJackGame:
             else:
                 self.dealer_score += CardManager.value(tmp)
         self.game_over = True
+
+    def adjust_for_aces(self, hand_index):
+        while self.player_scores[hand_index] > 21 and any(card.name == 'Туз' for card in self.player_hands[hand_index]):
+            self.player_scores[hand_index] -= 10
 
     def double(self, hand_index=0):
         self.move_count += 1

@@ -154,29 +154,49 @@ button:disabled {
 
 .cards-container {
     position: relative;
-    height: 150px; /* Adjust as needed */
+    height: 160px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .card {
     width: 110px;
     height: 150px;
     background-color: white;
-    border-radius: 10%;
     border: 1px solid black;
-    position: absolute;
+    position: relative;
+    margin: 5px;
+    transition: transform 1s ease-in-out;
+    transform: translate(200px, -200px);
     opacity: 0;
-    transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
-.card.show {
-    opacity: 1;
+.card.animate {
+    transform: translate(0, 0);
+    animation: fadeIn 1s ease-in-out forwards;
 }
 
-.card-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    font-size: 1.5em;
+.card .top-left,
+.card .bottom-right {
+    position: absolute;
+    font-size: 14px;
     font-weight: bold;
+}
+
+.card .top-left {
+    top: 5px;
+    left: 5px;
+}
+
+.card .bottom-right {
+    bottom: 5px;
+    right: 5px;
+    transform: rotate(180deg);
 }
