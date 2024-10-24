@@ -61,7 +61,7 @@ def check_balance():
 
 
 @app.route('/')
-def main_page():
+def main():
     return render_template('about.html')
 
 
@@ -210,7 +210,7 @@ def lk():
     user = User.query.get(user_id)
     if not user:
         flash('Пользователь не найден', 'danger')
-        return redirect(url_for('main'))
+        return redirect(url_for('about'))
 
     return render_template('lk.html', user=user)
 
@@ -247,7 +247,7 @@ def login():
 def logout():
     session.clear()
     flash('Вы вышли из системы.', 'success')
-    return redirect(url_for('main'))
+    return redirect(url_for('about'))
 
 
 if __name__ == '__main__':
