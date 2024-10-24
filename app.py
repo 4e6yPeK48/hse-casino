@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, session, render_template, jsonify, request, redirect, url_for, flash, session, g
+from flask import Flask, render_template, jsonify, request, redirect, url_for, flash, session, g
 
 from forms.forms import RegistrationForm, LoginForm
 from models.models import User, db

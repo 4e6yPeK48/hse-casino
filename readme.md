@@ -1,57 +1,78 @@
 # HSE Casino
 
-## Overview
-HSE Casino is a web application that allows users to play various casino games, including Blackjack. The application is built using Python and includes HTML templates for the frontend.
+## Обзор
 
-## Features
-- Play Blackjack with multiple hands
-- Double down and split options
-- Dynamic game updates using jQuery and AJAX
+HSE Casino - это веб-приложение, представляющее собой онлайн-казино с различными играми. Проект создан в рамках первого модуля Python в НИУ ВШЭ.
+
+## Фичи
+
+- Европейский блэкджек
+- Динамическое обновление игры через jQuery и AJAX
 - РАКЭТКААААА
 - СЛОТИКИ
 
-## Installation
+## Устновка
 
-### Prerequisites
+### Пререквизиты
+
 - Python 3.12
 - pip (Python package installer)
 
-### Steps
-1. Clone the repository:
+### Шаги
+
+1. Клонируйте репозиторий:
     ```sh
     git clone https://github.com/4e6yPeK48/hse-casino
     cd hse-casino
     ```
 
-2. Create a virtual environment:
+2. Создайте виртуальное окружение:
     ```sh
     python -m venv venv
     ```
 
-3. Activate the virtual environment:
-    - On Windows:
+3. Активируйте виртуальное окружение:
+    - Windows:
         ```sh
         venv\Scripts\activate
         ```
-    - On macOS/Linux:
+    - macOS/Linux:
         ```sh
         source venv/bin/activate
         ```
 
-4. Install the required libraries:
+4. Установите зависимости:
     ```sh
     pip install -r requirements.txt
     ```
 
-5. Run the application:
+5. Создайте базу данных:
+    ```sh
+    python
+    >>> from app import db
+    >>> db.create_all()
+    >>> exit()
+    ```
+   
+6. Добавьте .env файл в корень проекта:
+    ```sh
+   FLASK_APP=app.py
+   FLASK_ENV=development/production
+   SECRET_KEY=YourSecretKey
+   SQLALCHEMY_DATABASE_URI = 'YourDatabaseURI'
+   SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+7. Запустите приложение:
     ```sh
     python app.py
     ```
 
-## Usage
-- Navigate to the main page at `http://localhost:5000`
-- Click on "Блэкджэк" to start playing Blackjack
+## Использование
+
+- Перейти на `http://localhost:5000`
+- Игры в навбаре
 - А ЕЩЕ ЕСТЬ РАКЭТКА И СЛОТИКИ
 
-## License
-This project is licensed under the MIT License.
+## Лицензия
+
+Проект под MIT License.
