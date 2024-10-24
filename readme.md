@@ -73,6 +73,25 @@ HSE Casino - это веб-приложение, представляющее с
 - Игры в навбаре
 - А ЕЩЕ ЕСТЬ РАКЭТКА И СЛОТИКИ
 
+## Стек технологий
+- **Backend**:
+  - ЯП: Python
+  - Веб-фреймворк: Flask
+  - ORM: SQLAlchemy
+
+- **Frontend**:
+  - Язык программирования: JavaScript
+  - Библиотека: jQuery
+
+- **База данных**:
+  - Любая реляционная БД, поддерживаемая SQLAlchemy (изначально MariaDB)
+
+- **Прочее**:
+  - HTML и CSS для разметки и стилей веб-страниц
+  - Flask-WTF для работы с формами (например, `RegistrationForm`, `LoginForm`)
+  - Flask-SQLAlchemy для интеграции SQLAlchemy с Flask
+  - Flask-Session для управления сессиями пользователей
+
 ## Лицензия
 
 Проект под MIT License.
